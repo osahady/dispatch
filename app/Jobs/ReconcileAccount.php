@@ -30,6 +30,6 @@ class ReconcileAccount implements ShouldQueue
      */
     public function handle()
     {
-        logger('Reconciling account');
+        logger('Reconciling account hoally!');
     }
 }

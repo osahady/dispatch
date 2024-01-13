@@ -7,6 +7,7 @@ use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Bus;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,12 +24,7 @@ Route::get('/', function () {
     $user = User::find(1);
     $job = new ReconcileAccount($user);
 
-    resolve(Dispatcher::class)->dispatch($job);
-
-    $pipeline = new Pipeline(app());
-    $pipeline->send($job)->through([])->then(function () use ($job) {
-        logger('The job is finished: ' . now());
-    });
+    Bus::dispatch($job);
 
 
     return 'done';
