@@ -28,8 +28,8 @@ class ReconcileAccount implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle($string, $next)
+    public function handle()
     {
-        return $next('Some other string');
+        logger('Reconciling account');
     }
 }

@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use App\Jobs\ReconcileAccount;
+use Illuminate\Bus\Dispatcher;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -18,27 +19,18 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 |
 */
 
-Route::get('/', function (Filesystem $file) {
-    $pipeline = app(Pipeline::class);
+Route::get('/', function () {
+    $user = User::find(1);
+    $job = new ReconcileAccount($user);
 
-    $pipeline->send('hello freaking world')
-             ->through([
-                function ($string, $next){
-                    $string = ucwords($string);
+    resolve(Dispatcher::class)->dispatch($job);
 
-                    return $next($string);
-                },
-                 function ($string, $next){
-                    $string = str_ireplace('freaking', '', $string);
+    $pipeline = new Pipeline(app());
+    $pipeline->send($job)->through([])->then(function () use ($job) {
+        logger('The job is finished: ' . now());
+    });
 
-                    return $next($string);
-                },
-                ReconcileAccount::class
 
-             ])
-             ->then(function ($string){
-                dump($string);
-             });
     return 'done';
-    return view('welcome');
+    // return view('welcome');
 });
