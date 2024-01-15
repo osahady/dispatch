@@ -2,31 +2,14 @@
 
 use App\Models\User;
 use App\Jobs\ReconcileAccount;
-use Illuminate\Bus\Dispatcher;
-use Illuminate\Pipeline\Pipeline;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Contracts\Filesystem\Filesystem;
-use Illuminate\Support\Facades\Bus;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
 
 Route::get('/', function () {
-    $user = User::find(1);
-    $job = new ReconcileAccount($user);
+    $user = User::first();
 
-    Bus::dispatch($job);
-
-
-    return 'done';
-    // return view('welcome');
+    //there is an error in laravel 10.3 version
+    //this delay is not working
+    ReconcileAccount::dispatch($user)->delay(5);
+    return view('welcome');
 });
