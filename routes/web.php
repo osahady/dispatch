@@ -2,7 +2,6 @@
 
 use App\Models\User;
 use App\Jobs\ReconcileAccount;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
